@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <h1>Enter the colour pattern that appears</h1>
+
+        <button id="red" style="background-color:red; color:whitesmoke;">RED</button>
+        <button id="green" style="background-color:green; color:whitesmoke;">GREEN</button>
+        <button id="blue" style="background-color:blue; color:whitesmoke;">BLUE</button>
+        <button id="yellow" style="background-color:yellow; color:black;">YELLOW</button>
+        <button id="pink" style="background-color:pink; color:whitesmoke;">PINK</button>
+
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            let socket = io();
+
+            //default connect event
+            socket.on('connect', function() {
+                console.log("connected!");
+            });
+
+            socket.on('color_change', function(data) {
+                //create rgb color string for css
+                let colorStr = 'rgb(' + data.r + ',' + data.g + ',' + data.b + ')';
+                console.log("color received: " + colorStr);
+
+                //set background color with received color
+                document.body.style.backgroundColor = colorStr;
+            });
+
+            document.querySelector('#red').addEventListener('click', function() {
+                socket.emit('red');
+            });
+
+            document.querySelector('#green').addEventListener('click', function() {
+                socket.emit('green');
+            });
+
+            document.querySelector('#blue').addEventListener('click', function() {
+                socket.emit('blue');
+            });
+
+            document.querySelector('#yellow').addEventListener('click', function() {
+                socket.emit('yellow');
+            });
+
+            document.querySelector('#pink').addEventListener('click', function() {
+                socket.emit('pink');
+            });
+ 
+
+        </script>
+
+
+    </body>
+</html>

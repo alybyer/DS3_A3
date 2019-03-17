@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>Enter a colour pattern</h1>
+        <h2>Pattern cannot be longer than 5 colours</h2>
+
+        <!-- some very nice color buttons -->
+        <button id="red" style="background-color:red; color:whitesmoke;">RED</button>
+        <button id="green" style="background-color:green; color:whitesmoke;">GREEN</button>
+        <button id="blue" style="background-color:blue; color:whitesmoke;">BLUE</button>
+        <button id="yellow" style="background-color:yellow; color:black;">YELLOW</button>
+        <button id="pink" style="background-color:pink; color:whitesmoke;">PINK</button>
+
+        <!-- scripts go to bottom if you want them to execute AFTER the rest of the web page renders -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            let socket = io();
+
+            //default connect event
+            socket.on('connect', function() {
+                console.log("connected!");
+            });
+
+            //let's send some events to the server to pass on. Programmatic telephone game!
+            //querySelector() is a more modern and versatile function of getElementById()
+            //#name or class
+            //.name for classes
+            //etc.
+            //https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector 
+            //note that querySelector can also be used on elements so that you only search for their children
+            //instead of all elements within teh "document"
+            document.querySelector('#red').addEventListener('click', function() {
+                socket.emit('red');
+            });
+
+            document.querySelector('#green').addEventListener('click', function() {
+                socket.emit('green');
+            });
+
+            document.querySelector('#blue').addEventListener('click', function() {
+                socket.emit('blue');
+            });
+
+            document.querySelector('#yellow').addEventListener('click', function() {
+                socket.emit('yellow');
+            });
+
+            document.querySelector('#pink').addEventListener('click', function() {
+                socket.emit('pink');
+            });
+        </script>
+    </body>
+</html>
