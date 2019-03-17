@@ -35,7 +35,7 @@ socketIO.on('connection', function(socket) {
 
     socket.on('green', function(data) {
         console.log('green event heard');
-        socketIO.sockets.emit('color_change', {r:0, g:128, b:0});
+        socketIO.sockets.emit('color_change', {r:153, g:255, b:153});
     });
 
     socket.on('blue', function(data) {
@@ -45,7 +45,7 @@ socketIO.on('connection', function(socket) {
 
     socket.on('yellow', function(data) {
         console.log('yellow event heard');
-        socketIO.sockets.emit('color_change', {r:255, g:255, b:0});
+        socketIO.sockets.emit('color_change', {r:255, g:255, b:102});
     });
 
     socket.on('pink', function(data) {
