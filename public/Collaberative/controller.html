@@ -13,6 +13,8 @@
         <button id="yellow" style="background-color:yellow; color:black;">YELLOW</button>
         <button id="pink" style="background-color:pink; color:whitesmoke;">PINK</button>
 
+        <button id="done" style="background-color:gray; color:whitesmoke;">DONE</button>
+
         <!-- scripts go to bottom if you want them to execute AFTER the rest of the web page renders -->
         <script src="/socket.io/socket.io.js"></script>
         <script>
@@ -32,24 +34,29 @@
             //note that querySelector can also be used on elements so that you only search for their children
             //instead of all elements within teh "document"
             document.querySelector('#red').addEventListener('click', function() {
-                socket.emit('red');
+                socket.emit('colour_send','red');
             });
 
             document.querySelector('#green').addEventListener('click', function() {
-                socket.emit('green');
+                socket.emit('colour_send','green');
             });
 
             document.querySelector('#blue').addEventListener('click', function() {
-                socket.emit('blue');
+                socket.emit('colour_send','blue');
             });
 
             document.querySelector('#yellow').addEventListener('click', function() {
-                socket.emit('yellow');
+                socket.emit('colour_send','yellow');
             });
 
             document.querySelector('#pink').addEventListener('click', function() {
-                socket.emit('pink');
+                socket.emit('colour_send','pink');
+            });
+
+            document.querySelector('#done').addEventListener('click', function() {
+                socket.emit('controller_done');
             });
         </script>
+
     </body>
 </html>

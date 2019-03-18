@@ -8,6 +8,15 @@ const LISTEN_PORT = 8080; //make sure greater than 3000. Some ports are reserved
 
 app.use((express.static(__dirname + '/public'))); //set root dir to the public folder
 
+let contollerTurn = true;
+const colours = {
+    red: {r:255, g:91, b:91},
+    green: {r:153, g:255, b:153},
+    blue: {r:135, g:206, b:250},
+    yellow: {r:255, g:255, b:102}, 
+    pink: {r:255, g:182, b:193}
+}
+
 //routes
 app.get('/pattern', function(req,res) {
     res.sendFile(__dirname + '/public/Collaberative/pattern.html');
@@ -25,32 +34,14 @@ socketIO.on('connection', function(socket) {
         console.log(socket.id + ' has disconnected');
     });
 
-    //custom events
-    //socket = one client
-    //socketIO.sockets = all clients
-    socket.on('red', function(data) {
-        console.log('red event heard');
-        socketIO.sockets.emit('color_change', {r:255, g:91, b:91});
+    socket.on('colour_send', function(data) {
+        console.log('data');
+        socketIO.sockets.emit({colour: colours[data], key:data});
     });
 
-    socket.on('green', function(data) {
-        console.log('green event heard');
-        socketIO.sockets.emit('color_change', {r:153, g:255, b:153});
-    });
-
-    socket.on('blue', function(data) {
-        console.log('blue event heard');
-        socketIO.sockets.emit('color_change', {r:135, g:206, b:250});
-    });
-
-    socket.on('yellow', function(data) {
-        console.log('yellow event heard');
-        socketIO.sockets.emit('color_change', {r:255, g:255, b:102});
-    });
-
-    socket.on('pink', function(data) {
-        console.log('pink event heard');
-        socketIO.sockets.emit('color_change', {r:255, g:182, b:193});
+    socket.on('done', function(data) {
+        controllerTurn = false;
+        socketIO.sockets.emit('pattern_start');
     });
 });
 
