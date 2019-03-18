@@ -13,7 +13,7 @@ const colours = {
     red: {r:255, g:91, b:91},
     green: {r:153, g:255, b:153},
     blue: {r:135, g:206, b:250},
-    yellow: {r:255, g:255, b:102}, 
+    yellow: {r:255, g:255, b:102},
     pink: {r:255, g:182, b:193}
 }
 
@@ -44,12 +44,14 @@ socketIO.on('connection', function(socket) {
         socketIO.sockets.emit('pattern_start');
     });
 
-    socket.on('pattern_comlete', function(data) {
+    socket.on('pattern_complete', function(data) {
         controllerTurn = true;
+        socketIO.sockets.emit('controller_start', true);
     });
 
-    socket.on('pattern_comle', function(data) {
+    socket.on('pattern_failed', function(data) {
         controllerTurn = true;
+        socketIO.sockets.emit('controller_start', false);
     });
 
 });

@@ -6,57 +6,75 @@
         <h1>Enter a colour pattern</h1>
         <h2>Pattern cannot be longer than 5 colours</h2>
 
-        <!-- some very nice color buttons -->
-        <button id="red" style="background-color:red; color:whitesmoke;">RED</button>
-        <button id="green" style="background-color:green; color:whitesmoke;">GREEN</button>
-        <button id="blue" style="background-color:blue; color:whitesmoke;">BLUE</button>
-        <button id="yellow" style="background-color:yellow; color:black;">YELLOW</button>
-        <button id="pink" style="background-color:pink; color:whitesmoke;">PINK</button>
+        <div style="display: flex flex-direction=column">
+            <div id='button_container' syle="flex-direction=row">
+                <!-- some very nice color buttons -->
+                <button id="red" style="background-color:red; color:whitesmoke;">RED</button>
+                <button id="green" style="background-color:green; color:whitesmoke;">GREEN</button>
+                <button id="blue" style="background-color:blue; color:whitesmoke;">BLUE</button>
+                <button id="yellow" style="background-color:yellow; color:black;">YELLOW</button>
+                <button id="pink" style="background-color:pink; color:whitesmoke;">PINK</button>
+                <button id="done" style="background-color:grey; color:whitesmoke;">Done</button>
+            </div>
 
-        <button id="done" style="background-color:gray; color:whitesmoke;">DONE</button>
+            <div id="create">Enter your pattern now!</div>
+            <div id="wait" style="display: none">Wait while the other user tries to recreate the pattern!</div>
+        </div>
+
 
         <!-- scripts go to bottom if you want them to execute AFTER the rest of the web page renders -->
         <script src="/socket.io/socket.io.js"></script>
         <script>
             let socket = io();
 
+            function disableButtons(value = true) {
+                document.querySelectorAll('button').forEach((btn) => {
+                    btn.disabled = value;
+                });
+            }
+
             //default connect event
             socket.on('connect', function() {
                 console.log("connected!");
             });
 
-            //let's send some events to the server to pass on. Programmatic telephone game!
-            //querySelector() is a more modern and versatile function of getElementById()
-            //#name or class
-            //.name for classes
-            //etc.
-            //https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector 
-            //note that querySelector can also be used on elements so that you only search for their children
-            //instead of all elements within teh "document"
+            socket.on('controller_start', (data) => {
+                disableButtons(false);
+                document.getElementById('create').style.display = 'block';
+                document.getElementById('button_container').style.display = 'block';
+
+                document.getElementById('wait').style.display = 'none';
+            });
+
             document.querySelector('#red').addEventListener('click', function() {
-                socket.emit('colour_send','red');
+                socket.emit('colour_send', 'red');
             });
 
             document.querySelector('#green').addEventListener('click', function() {
-                socket.emit('colour_send','green');
+                socket.emit('colour_send', 'green');
             });
 
             document.querySelector('#blue').addEventListener('click', function() {
-                socket.emit('colour_send','blue');
+                socket.emit('colour_send', 'blue');
             });
 
             document.querySelector('#yellow').addEventListener('click', function() {
-                socket.emit('colour_send','yellow');
+                socket.emit('colour_send', 'yellow');
             });
 
             document.querySelector('#pink').addEventListener('click', function() {
-                socket.emit('colour_send','pink');
+                socket.emit('colour_send', 'pink');
             });
 
             document.querySelector('#done').addEventListener('click', function() {
                 socket.emit('controller_done');
+                document.getElementById('create').style.display = 'none';
+                document.getElementById('button_container').style.display = 'none';
+
+                document.getElementById('wait').style.display = 'block';
+
+                disableButtons();
             });
         </script>
-
     </body>
 </html>

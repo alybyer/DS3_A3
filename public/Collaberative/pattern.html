@@ -6,11 +6,17 @@
     <body>
         <h1>Enter the colour pattern that appears</h1>
 
-        <button id="red" style="background-color:red; color:whitesmoke;" disabled>RED</button>
-        <button id="green" style="background-color:green; color:whitesmoke;" disabled>GREEN</button>
-        <button id="blue" style="background-color:blue; color:whitesmoke;" disabled>BLUE</button>
-        <button id="yellow" style="background-color:yellow; color:black;" disabled>YELLOW</button>
-        <button id="pink" style="background-color:pink; color:whitesmoke;" disabled>PINK</button>
+        <div style="display: flex flex-direction=column">
+            <div id="button_container" syle="flex-direction=row; display: none">
+                <button id="red" style="background-color:red; color:whitesmoke;" disabled>RED</button>
+                <button id="green" style="background-color:green; color:whitesmoke;" disabled>GREEN</button>
+                <button id="blue" style="background-color:blue; color:whitesmoke;" disabled>BLUE</button>
+                <button id="yellow" style="background-color:yellow; color:black;" disabled>YELLOW</button>
+                <button id="pink" style="background-color:pink; color:whitesmoke;" disabled>PINK</button>
+            </div>
+            <div id="create" style="display: none">Enter the pattern back!</div>
+            <div id="wait">Watch as the other user creates the pattern!</div>
+        </div>
 
 
         <script src="/socket.io/socket.io.js"></script>
@@ -27,16 +33,26 @@
 
             function failed() {
                 socket.emit('pattern_failed');
-                console.log("failed");
-                disableButtons()
+
+                pattern = [];
+                counter = 0;
+
+                document.body.style.backgroundColor = 'white';
+
+                document.getElementById('wait').style.display = 'none';
+                document.getElementById('button_container').style.display = 'none';
+                document.getElementById('create').style.display = 'block';
+
+                disableButtons();
+                alert("Thats wrong!!");
             }
 
             function buttonClicked(key) {
-
                 if (pattern[counter].key === key) {
                     document.body.style.backgroundColor = pattern[counter].colorStr;
                 } else {
                     failed();
+                    return;
                 }
 
                 counter++;
@@ -44,19 +60,27 @@
                     console.log("done");
                     disableButtons();
                     document.body.style.backgroundColor = 'white';
-                    socket.emit('pattern_comlete');
+
+                    pattern = [];
+                    counter = 0;
+
+                    document.getElementById('wait').style.display = 'block';
+                    document.getElementById('button_container').style.display = 'none';
+                    document.getElementById('create').style.display = 'none';
+
+
+                    socket.emit('pattern_complete');
                 }
             }
 
             //default connect event
             socket.on('connect', function() {
-                console.log("connected!"); 
+                console.log("connected!");
             });
 
             socket.on('color_change', function(data) {
                 //create rgb color string for css
                 let colorStr = 'rgb(' + data.colour.r + ',' + data.colour.g + ',' + data.colour.b + ')';
-                console.log("color received: " + colorStr);
                 pattern.push({key: data.key, colorStr: colorStr});
 
                 //set background color with received color
@@ -64,8 +88,12 @@
             });
 
             socket.on('pattern_start', function(data) {
-                console.log('done');
                 document.body.style.backgroundColor = 'white';
+
+                document.getElementById('wait').style.display = 'none';
+                document.getElementById('button_container').style.display = 'block';
+                document.getElementById('create').style.display = 'block';
+
                 disableButtons(false);
             });
 
