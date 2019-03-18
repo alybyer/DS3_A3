@@ -36,13 +36,22 @@ socketIO.on('connection', function(socket) {
 
     socket.on('colour_send', function(data) {
         console.log('data');
-        socketIO.sockets.emit({colour: colours[data], key:data});
+        socketIO.sockets.emit('color_change', {colour: colours[data], key:data});
     });
 
-    socket.on('done', function(data) {
+    socket.on('controller_done', function(data) {
         controllerTurn = false;
         socketIO.sockets.emit('pattern_start');
     });
+
+    socket.on('pattern_comlete', function(data) {
+        controllerTurn = true;
+    });
+
+    socket.on('pattern_comle', function(data) {
+        controllerTurn = true;
+    });
+
 });
 
 //finally, start server

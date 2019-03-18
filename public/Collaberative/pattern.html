@@ -17,6 +17,36 @@
         <script>
             let socket = io();
             let pattern = [];
+            let counter = 0;
+
+            function disableButtons(value = true) {
+                document.querySelectorAll('button').forEach((btn) => {
+                    btn.disabled = value;
+                });
+            }
+
+            function failed() {
+                socket.emit('pattern_failed');
+                console.log("failed");
+                disableButtons()
+            }
+
+            function buttonClicked(key) {
+
+                if (pattern[counter].key === key) {
+                    document.body.style.backgroundColor = pattern[counter].colorStr;
+                } else {
+                    failed();
+                }
+
+                counter++;
+                if (counter === pattern.length) {
+                    console.log("done");
+                    disableButtons();
+                    document.body.style.backgroundColor = 'white';
+                    socket.emit('pattern_comlete');
+                }
+            }
 
             //default connect event
             socket.on('connect', function() {
@@ -27,36 +57,24 @@
                 //create rgb color string for css
                 let colorStr = 'rgb(' + data.colour.r + ',' + data.colour.g + ',' + data.colour.b + ')';
                 console.log("color received: " + colorStr);
-                pattern.push(data.key); 
+                pattern.push({key: data.key, colorStr: colorStr});
 
                 //set background color with received color
                 document.body.style.backgroundColor = colorStr;
             });
 
             socket.on('pattern_start', function(data) {
-                
+                console.log('done');
+                document.body.style.backgroundColor = 'white';
+                disableButtons(false);
             });
 
-            document.querySelector('#red').addEventListener('click', function() {
-                socket.emit('red');
-            });
+            document.querySelector('#red').addEventListener('click', () => buttonClicked('red'));
+            document.querySelector('#green').addEventListener('click', () => buttonClicked('green'));
+            document.querySelector('#blue').addEventListener('click', () => buttonClicked('blue'));
+            document.querySelector('#yellow').addEventListener('click', () => buttonClicked('yellow'));
+            document.querySelector('#pink').addEventListener('click', () => buttonClicked('pink'));
 
-            document.querySelector('#green').addEventListener('click', function() {
-                socket.emit('green');
-            });
-
-            document.querySelector('#blue').addEventListener('click', function() {
-                socket.emit('blue');
-            });
-
-            document.querySelector('#yellow').addEventListener('click', function() {
-                socket.emit('yellow');
-            });
-
-            document.querySelector('#pink').addEventListener('click', function() {
-                socket.emit('pink');
-            });
- 
 
         </script>
 
