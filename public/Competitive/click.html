@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head><h1> Welcome to the clicking game.</h1>
+    </head>
+    <body>
+
+      <img id="cookie" src="http://pngimg.com/uploads/cookie/cookie_PNG13648.png" />
+        <!-- scripts go to bottom if you want them to execute AFTER the rest of the web page renders -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+          let socket = io();
+
+          //default connect event
+          socket.on('connect', function() {
+            console.log("connected!");
+          });
+        </script>
+    </body>
+</html>

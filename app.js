@@ -26,6 +26,10 @@ app.get('/controller', function(req,res) {
     res.sendFile(__dirname + '/public/Collaberative/controller.html');
 });
 
+app.get('/click', function(req,res) {
+    res.sendFile(__dirname + '/public/Competitive/click.html');
+});
+
 //websocket stuff
 socketIO.on('connection', function(socket) {
     console.log(socket.id + ' has connected!');
