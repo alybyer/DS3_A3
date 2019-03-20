@@ -10,6 +10,8 @@
       <div id="click-count-container" hidden>Click count: <div id="click-count"></div></div>
       <img id="cookie" hidden src="http://pngimg.com/uploads/cookie/cookie_PNG13648.png" />
       <button id="ready-btn">Ready</button>
+      <div id="waiting" hidden>Waiting for players!</div>
+      <div id="results" hidden></div>
 
       <!-- scripts go to bottom if you want them to execute AFTER the rest of the web page renders -->
       <script src="/socket.io/socket.io.js"></script>
@@ -24,6 +26,8 @@
         
         document.getElementById('ready-btn').addEventListener('click', () => {
           socket.emit('player_ready');
+          document.getElementById('waiting').hidden = false;
+          document.getElementById('ready-btn').hidden = true;
         });
 
         document.getElementById('cookie').addEventListener('click', () => {
@@ -34,12 +38,23 @@
         socket.on('start', function() {
             console.log("game started");
             document.getElementById('cookie').hidden = false;
-            document.getElementById('ready-btn').hidden = true;
             document.getElementById('click-count-container').hidden = false;
+            document.getElementById('waiting').hidden = true;
         });
-        
 
+        socket.on('stop', function() {
+            console.log("game over");
+            document.getElementById('cookie').hidden = true;
+            document.getElementById('click-count-container').hidden = false;
+            document.getElementById('waiting').hidden = true;
 
+            socket.emit('score', numClick);
+        });
+
+        socket.on('results', (data) => {
+          document.getElementById('results').innerText = data ? 'You Won!' : "You lost :(";
+          document.getElementById('results').hidden = false;
+        });
       </script>
     </body>
 </html>

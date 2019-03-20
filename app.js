@@ -17,7 +17,8 @@ const colours = {
     pink: {r:255, g:182, b:193}
 }
 
-const players = {};
+let players = {};
+let scores = {};
 
 //routes
 app.get('/pattern', function(req,res) {
@@ -35,11 +36,12 @@ app.get('/click', function(req,res) {
 //websocket stuff
 socketIO.on('connection', function(socket) {
     console.log(socket.id + ' has connected!');
+    console.log(players);
     players[socket.id] = false;
 
     socket.on('disconnect', function(data) {
         console.log(socket.id + ' has disconnected');
-        players[socket.id] = null;
+        delete players[socket.id];
     });
 
     socket.on('colour_send', function(data) {
@@ -63,22 +65,66 @@ socketIO.on('connection', function(socket) {
     });
 
     socket.on('player_ready', function(data) {
-        console.log(socket.id);
+        console.log(socket.id + "is ready");
         players[socket.id] = true;
 
         startGame();
+    });
+
+    socket.on('score', (data) => {
+        scores[socket.id] = data;
+        console.log('got score ' + Object.keys(scores).length + " " + Object.keys(players).length);
+
+        
+        if (Object.keys(scores).length === Object.keys(players).length) {
+            let winner = '';
+            let max = 0;
+
+            const list = Object.keys(scores);
+
+            list.forEach(player => {
+                if (scores[player] > max) {
+                    max = scores[player];
+                    winner = player;
+                }
+            });
+
+            list.forEach(player => {
+                socketIO.to(player).emit('results', winner === player);
+            });
+
+            players = {};
+            scores = {};
+        }
     });
 });
 
 function startGame() {
     let allReady = true;
-    Object.keys(players).forEach(player => {
-        if(!players[player]) allReady = false;
+
+    const list = Object.keys(players);
+    list.forEach(player => {
+        allReady = players[player];
     });
 
-    if (!allready) return;
+    console.log("Checking allReady: " + allReady + " length: " + list.length);
+    if (!allReady || list.length < 2) return;
 
     socketIO.sockets.emit('start');
+    console.log('Starting game!');
+
+    setTimeout(endGame, 10000);
+}
+
+function endGame() {
+    socketIO.sockets.emit('stop');
+    console.log('stoping game');
+
+    const list = Object.keys(players);
+    list.forEach(player => {
+        players[player] = false;
+    });
+
 }
 
 //finally, start server
