@@ -17,6 +17,8 @@ const colours = {
     pink: {r:255, g:182, b:193}
 }
 
+const players = {};
+
 //routes
 app.get('/pattern', function(req,res) {
     res.sendFile(__dirname + '/public/Collaberative/pattern.html');
@@ -33,9 +35,11 @@ app.get('/click', function(req,res) {
 //websocket stuff
 socketIO.on('connection', function(socket) {
     console.log(socket.id + ' has connected!');
+    players[socket.id] = false;
 
     socket.on('disconnect', function(data) {
         console.log(socket.id + ' has disconnected');
+        players[socket.id] = null;
     });
 
     socket.on('colour_send', function(data) {
@@ -58,7 +62,24 @@ socketIO.on('connection', function(socket) {
         socketIO.sockets.emit('controller_start', false);
     });
 
+    socket.on('player_ready', function(data) {
+        console.log(socket.id);
+        players[socket.id] = true;
+
+        startGame();
+    });
 });
+
+function startGame() {
+    let allReady = true;
+    Object.keys(players).forEach(player => {
+        if(!players[player]) allReady = false;
+    });
+
+    if (!allready) return;
+
+    socketIO.sockets.emit('start');
+}
 
 //finally, start server
 server.listen(LISTEN_PORT);

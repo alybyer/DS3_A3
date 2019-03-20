@@ -1,19 +1,45 @@
 <!DOCTYPE html>
 <html>
-    <head><h1> Welcome to the clicking game.</h1>
+    <head>
+      <h1> Welcome to the cookie clicking game.</h1>
+      <h3> Click the button when youre ready to play.</h3>
+
     </head>
     <body>
 
-      <img id="cookie" src="http://pngimg.com/uploads/cookie/cookie_PNG13648.png" />
-        <!-- scripts go to bottom if you want them to execute AFTER the rest of the web page renders -->
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-          let socket = io();
+      <div id="click-count-container" hidden>Click count: <div id="click-count"></div></div>
+      <img id="cookie" hidden src="http://pngimg.com/uploads/cookie/cookie_PNG13648.png" />
+      <button id="ready-btn">Ready</button>
 
-          //default connect event
-          socket.on('connect', function() {
-            console.log("connected!");
-          });
-        </script>
+      <!-- scripts go to bottom if you want them to execute AFTER the rest of the web page renders -->
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+        let socket = io();
+        let numClick = 0;
+
+        //default connect event
+        socket.on('connect', function() {
+          console.log("connected!");
+        });
+        
+        document.getElementById('ready-btn').addEventListener('click', () => {
+          socket.emit('player_ready');
+        });
+
+        document.getElementById('cookie').addEventListener('click', () => {
+          numClick++;
+          document.getElementById('click-count').innerText = numClick;
+        });
+
+        socket.on('start', function() {
+            console.log("game started");
+            document.getElementById('cookie').hidden = false;
+            document.getElementById('ready-btn').hidden = true;
+            document.getElementById('click-count-container').hidden = false;
+        });
+        
+
+
+      </script>
     </body>
 </html>
